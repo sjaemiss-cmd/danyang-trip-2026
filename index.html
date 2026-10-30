@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>단양 2박 3일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f4ef;
+  --card: #ffffff;
+  --ink: #1f2421;
+  --muted: #5f6762;
+  --line: #e2ded5;
+  --accent: #2f6b4f;
+  --accent-soft: #e3efe8;
+  --warn: #9a5b12;
+  --warn-soft: #fbf0df;
+  --rain: #3d5a80;
+  --rain-soft: #e5ecf5;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141715;
+    --card: #1d211f;
+    --ink: #e8ebe9;
+    --muted: #a3aba6;
+    --line: #313733;
+    --accent: #7cc4a0;
+    --accent-soft: #1f3329;
+    --warn: #e7b46b;
+    --warn-soft: #33281a;
+    --rain: #9db8dd;
+    --rain-soft: #1e2836;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Noto Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  line-height: 1.6;
+  font-size: 16px;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+header h1 { font-size: 1.9rem; margin: 0 0 4px; letter-spacing: -0.02em; }
+header p { margin: 0; color: var(--muted); }
+nav.days {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 12px 0; margin: 16px 0 8px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+nav.days a {
+  flex: 0 0 auto;
+  text-decoration: none; color: var(--ink);
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--card);
+  font-size: 0.92rem; font-weight: 500;
+}
+nav.days a:hover { border-color: var(--accent); color: var(--accent); }
+section { margin-top: 28px; scroll-margin-top: 64px; }
+h2 { font-size: 1.3rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+.sub { color: var(--muted); margin: 0 0 14px; font-size: 0.95rem; }
+.card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 14px; padding: 16px;
+}
+.facts { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 560px) { .facts { grid-template-columns: 1fr 1fr; } }
+.fact .k { color: var(--muted); font-size: 0.85rem; }
+.fact .v { font-weight: 500; }
+.badge {
+  display: inline-block; font-size: 0.78rem; font-weight: 500;
+  padding: 2px 10px; border-radius: 999px; margin-right: 6px;
+}
+.b-rain { background: var(--rain-soft); color: var(--rain); }
+.b-sun { background: var(--accent-soft); color: var(--accent); }
+.b-warn { background: var(--warn-soft); color: var(--warn); }
+ol.timeline { list-style: none; margin: 0; padding: 0; }
+ol.timeline li {
+  display: grid; grid-template-columns: 58px 1fr; gap: 12px;
+  padding: 14px 0; border-top: 1px solid var(--line);
+}
+ol.timeline li:first-child { border-top: 0; padding-top: 4px; }
+.t { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.what { font-weight: 700; }
+.move { color: var(--muted); font-size: 0.88rem; }
+.note { font-size: 0.92rem; margin-top: 2px; }
+.opt { font-size: 0.75rem; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; margin-left: 4px; font-weight: 500; }
+a.map { color: var(--accent); font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
+a.map:hover { text-decoration: underline; }
+.callout {
+  margin-top: 12px; padding: 12px 14px; border-radius: 12px;
+  background: var(--warn-soft); color: var(--ink); font-size: 0.93rem;
+}
+.callout b { color: var(--warn); }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { text-align: left; padding: 9px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+td.n, th.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr.total td { font-weight: 700; border-top: 2px solid var(--ink); }
+.small { font-size: 0.85rem; color: var(--muted); }
+ul.check { margin: 0; padding-left: 20px; }
+ul.check li { margin: 6px 0; }
+footer { margin-top: 40px; font-size: 0.82rem; color: var(--muted); }
+footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>단양 2박 3일</h1>
+  <p>2026년 11월 1일(일) – 3일(화) · 자동차 · 두 사람</p>
+</header>
+
+<nav class="days" aria-label="바로가기">
+  <a href="#basics">기본 정보</a>
+  <a href="#day1">1일차 · 일</a>
+  <a href="#day2">2일차 · 월</a>
+  <a href="#day3">3일차 · 화</a>
+  <a href="#budget">예산</a>
+  <a href="#todo">확인할 것</a>
+</nav>
+
+<section id="basics">
+  <h2>기본 정보</h2>
+  <p class="sub">쉬는 날과 날씨에 맞춰 순서를 정했어요.</p>
+  <div class="card facts">
+    <div class="fact"><div class="k">숙소</div><div class="v">단양읍 도전리, 구경시장 바로 옆 · 체크인 1일 15:00</div></div>
+    <div class="fact"><div class="k">패러글라이딩</div><div class="v">2일(월) · 잔금 20만원 현장 결제</div></div>
+    <div class="fact"><div class="k">날씨 (10/30 예보)</div><div class="v"><span class="badge b-rain">1일 비</span><span class="badge b-sun">2일 갬</span></div></div>
+    <div class="fact"><div class="k">쉬는 날 피하기</div><div class="v">아쿠아리움·장다리식당은 월요일, 만천하스카이워크는 화요일 휴무</div></div>
+  </div>
+</section>
+
+<section id="day1">
+  <h2>1일차 · 11월 1일 일요일</h2>
+  <p class="sub"><span class="badge b-rain">비 예보</span>실내 위주 · 단양 5일장 열리는 날</p>
+  <div class="card">
+    <ol class="timeline">
+      <li><div class="t">08:50</div><div>
+        <div class="what">송파 출발</div>
+        <div class="move">역곡까지 약 35km · 50~60분</div>
+      </div></li>
+      <li><div class="t">09:50</div><div>
+        <div class="what">역곡역에서 픽업 후 단양으로</div>
+        <div class="move">약 190km · 2시간 40분~3시간 · 휴게소 한 번</div>
+      </div></li>
+      <li><div class="t">12:50</div><div>
+        <div class="what">점심 · 장다리식당 마늘정식 <a class="map" href="https://map.naver.com/p/search/단양%20장다리식당" target="_blank" rel="noopener">지도</a></div>
+        <div class="note">10:30~20:00 · 월요일 휴무라 이날이 유일한 기회. 기다릴 수 있어요.</div>
+      </div></li>
+      <li><div class="t">14:20</div><div>
+        <div class="what">다누리아쿠아리움 <a class="map" href="https://map.naver.com/p/search/다누리아쿠아리움" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">읍내에서 5분</div>
+        <div class="note">실내 1~1.5시간 · 성인 18,000원(지역 상품권 5,000원 돌려받음)</div>
+      </div></li>
+      <li><div class="t">15:40</div><div>
+        <div class="what">숙소 체크인 · 쉬기</div>
+      </div></li>
+      <li><div class="t">17:30</div><div>
+        <div class="what">단양구경시장에서 저녁 <a class="map" href="https://map.naver.com/p/search/단양구경시장" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">숙소에서 걸어서</div>
+        <div class="note">흑마늘닭강정 · 마늘만두 · 마늘순대. 가게 대부분이 저녁 7시쯤 닫아요.</div>
+      </div></li>
+      <li><div class="t">19:00</div><div>
+        <div class="what">수양개빛터널 <a class="map" href="https://map.naver.com/p/search/수양개빛터널" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">차로 약 15분</div>
+        <div class="note">14:00~21:50(입장은 21:00까지) · 성인 9,000원</div>
+      </div></li>
+      <li><div class="t">20:30</div><div>
+        <div class="what">숙소로</div>
+      </div></li>
+    </ol>
+    <div class="callout"><b>운전할 사람은</b> 시장에서 술 마시지 않기. 빛터널까지 차로 가야 해요.</div>
+  </div>
+</section>
+
+<section id="day2">
+  <h2>2일차 · 11월 2일 월요일</h2>
+  <p class="sub"><span class="badge b-sun">갬</span>야외 · 패러글라이딩 날</p>
+  <div class="card">
+    <ol class="timeline">
+      <li><div class="t">09:20</div><div>
+        <div class="what">숙소 출발</div>
+        <div class="move">양방산 약 15분 / 카페산 약 25~30분 · 예약 30분 전에 도착</div>
+      </div></li>
+      <li><div class="t">10:00</div><div>
+        <div class="what">패러글라이딩</div>
+        <div class="note">비행은 10분 안팎, 기다리는 시간까지 1~1.5시간. 영상 촬영비가 따로인지 확인.</div>
+      </div></li>
+      <li><div class="t">11:30</div><div>
+        <div class="what">카페산 전망 커피 <span class="opt">선택</span> <a class="map" href="https://map.naver.com/p/search/카페산%20단양" target="_blank" rel="noopener">지도</a></div>
+      </div></li>
+      <li><div class="t">12:30</div><div>
+        <div class="what">점심 · 돌집식당 <a class="map" href="https://map.naver.com/p/search/단양%20돌집식당" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">읍내로 약 25분</div>
+        <div class="note">10:00~21:00 연중무휴 · 흑마늘정식, 곤드레정식. 대신 갈 곳: 대교식당(마늘영양솥밥).</div>
+      </div></li>
+      <li><div class="t">14:00</div><div>
+        <div class="what">만천하스카이워크 <a class="map" href="https://map.naver.com/p/search/만천하스카이워크" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">차로 약 10분</div>
+        <div class="note">09:00~17:00(표는 16:30까지) · 성인 4,000원. 알파인코스터 18,000원, 짚와이어 30,000원은 선택.</div>
+      </div></li>
+      <li><div class="t">15:40</div><div>
+        <div class="what">이끼터널 · 차로 지나가며 사진 <a class="map" href="https://map.naver.com/p/search/단양%20이끼터널" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">5분 · 차와 사람이 같이 다니는 길이라 조심</div>
+      </div></li>
+      <li><div class="t">16:10</div><div>
+        <div class="what">단양강 잔도 걷기 <a class="map" href="https://map.naver.com/p/search/단양강잔도" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">약 10분</div>
+        <div class="note">무료 · 1.2km · 17:35쯤 해가 지면 조명이 켜져요(밤 11시까지).</div>
+      </div></li>
+      <li><div class="t">18:30</div><div>
+        <div class="what">저녁 · 마늘떡갈비 <a class="map" href="https://map.naver.com/p/search/단양%20가연%20떡갈비" target="_blank" rel="noopener">가연</a> 또는 <a class="map" href="https://map.naver.com/p/search/단양%20박쏘가리" target="_blank" rel="noopener">박쏘가리</a></div>
+        <div class="note">월요일에 여는지 아침에 전화로 확인하기.</div>
+      </div></li>
+      <li><div class="t">밤</div><div>
+        <div class="what">숙소에서 쉬기 · 강변 산책</div>
+      </div></li>
+    </ol>
+    <div class="callout"><b>패러가 오후라면</b> 오전에 만천하스카이워크(9시 개장)와 이끼터널, 점심 먹고 패러, 해 질 무렵 잔도.<br>
+    <b>날씨 때문에 취소되면</b> 업체에 3일(화) 오전으로 옮길 수 있는지 물어보기.</div>
+  </div>
+</section>
+
+<section id="day3">
+  <h2>3일차 · 11월 3일 화요일</h2>
+  <p class="sub">만천하·빛터널은 쉬는 날 · 돌아가는 길에 제천</p>
+  <div class="card">
+    <ol class="timeline">
+      <li><div class="t">09:30</div><div>
+        <div class="what">고수동굴 <span class="opt">선택</span> <a class="map" href="https://map.naver.com/p/search/단양%20고수동굴" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">차로 약 5분</div>
+        <div class="note">40분 정도 · 성인 11,000원 · 계단과 미끄러운 바닥 주의</div>
+      </div></li>
+      <li><div class="t">10:40</div><div>
+        <div class="what">체크아웃</div>
+      </div></li>
+      <li><div class="t">11:00</div><div>
+        <div class="what">도담삼봉 · 석문 <a class="map" href="https://map.naver.com/p/search/도담삼봉" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">차로 약 10분</div>
+        <div class="note">무료(주차는 유료) · 석문까지 계단 15분 정도</div>
+      </div></li>
+      <li><div class="t">12:10</div><div>
+        <div class="what">점심 · 왕릉숯불갈비 마늘솥밥정식 <a class="map" href="https://map.naver.com/p/search/단양%20왕릉숯불갈비" target="_blank" rel="noopener">지도</a></div>
+        <div class="note">11:00~21:00 연중무휴 · 앞에서 못 간 곳으로 바꿔도 좋아요.</div>
+      </div></li>
+      <li><div class="t">13:30</div><div>
+        <div class="what">옥순봉 출렁다리 (제천) <a class="map" href="https://map.naver.com/p/search/옥순봉출렁다리" target="_blank" rel="noopener">지도</a></div>
+        <div class="move">차로 약 35분</div>
+        <div class="note">09:00~17:00 · 3,000원 중 2,000원을 제천 지역화폐로 돌려줘요 · 바람이 세면 운영 안 할 수 있어요.</div>
+      </div></li>
+      <li><div class="t">14:40</div><div>
+        <div class="what">역곡으로 출발</div>
+        <div class="move">약 170km · 2시간 30분</div>
+      </div></li>
+      <li><div class="t">17:10</div><div>
+        <div class="what">역곡 도착</div>
+        <div class="note">송파로 가는 길은 퇴근 시간과 겹쳐요. 저녁 먹고 7시 반 이후 출발 추천.</div>
+      </div></li>
+    </ol>
+  </div>
+</section>
+
+<section id="budget">
+  <h2>예산</h2>
+  <p class="sub">숙소·패러글라이딩을 빼고 남은 34만원 안에서, 두 사람 기준 추정치</p>
+  <div class="card">
+    <table>
+      <thead><tr><th>항목</th><th class="n">금액</th></tr></thead>
+      <tbody>
+        <tr><td>기름값 <span class="small">· 약 520km</span></td><td class="n">7만원</td></tr>
+        <tr><td>고속도로 통행료 <span class="small">· 왕복</span></td><td class="n">3만원</td></tr>
+        <tr><td>주차</td><td class="n">1만원</td></tr>
+        <tr><td>입장료 <span class="small">· 아쿠아리움, 빛터널, 만천하, 출렁다리</span></td><td class="n">6.8만원</td></tr>
+        <tr><td>식사 다섯 끼 <span class="small">· 한 끼 평균 3만원</span></td><td class="n">15만원</td></tr>
+        <tr><td>카페 · 간식</td><td class="n">1.5만원</td></tr>
+        <tr><td>돌려받는 돈 <span class="small">· 상품권, 지역화폐</span></td><td class="n">−1.4만원</td></tr>
+        <tr class="total"><td>합계</td><td class="n">약 32.9만원</td></tr>
+      </tbody>
+    </table>
+    <p class="small">남는 돈은 1만원 정도예요. 고수동굴(2.2만원), 패러 영상 촬영비, 알파인코스터(3.6만원), 쏘가리매운탕, 마지막 날 역곡 저녁을 넣으면 넘어요. 패러 잔금 20만원은 이 표와 별도로 현장에서 내요.</p>
+  </div>
+</section>
+
+<section id="todo">
+  <h2>출발 전에 확인할 것</h2>
+  <div class="card">
+    <ul class="check">
+      <li><b>패러글라이딩 업체</b>: 비행 시각, 모이는 곳(양방산 / 카페산), 영상 촬영비, 날씨로 취소될 때 날짜 변경</li>
+      <li><b>숙소</b>: 퇴실 시간, 주차</li>
+      <li>2일(월) 저녁 식당이 여는지</li>
+      <li>수양개빛터널 1일 운영 여부 · 043-421-5454</li>
+      <li>전날 밤 기상청 단양 시간별 날씨</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  2026년 10월 30일 웹 조사 기준이에요. 운영 시간과 요금은 바뀔 수 있으니 가기 전에 한 번 더 확인하세요. 이동 시간은 추정치예요.
+</footer>
+
+</div>
+</body>
+</html>
