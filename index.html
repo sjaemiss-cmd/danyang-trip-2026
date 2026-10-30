@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>단양 2박 3일</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +21,7 @@
   --warn-soft: #fbf0df;
   --rain: #3d5a80;
   --rain-soft: #e5ecf5;
+  --scrim: rgba(20, 24, 22, 0.55);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -35,6 +36,7 @@
     --warn-soft: #33281a;
     --rain: #9db8dd;
     --rain-soft: #1e2836;
+    --scrim: rgba(0, 0, 0, 0.65);
   }
 }
 * { box-sizing: border-box; }
@@ -47,7 +49,8 @@ body {
   line-height: 1.6;
   font-size: 16px;
 }
-.wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+body.modal-open { overflow: hidden; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 96px; }
 header h1 { font-size: 1.9rem; margin: 0 0 4px; letter-spacing: -0.02em; }
 header p { margin: 0; color: var(--muted); }
 nav.days {
@@ -83,6 +86,8 @@ h2 { font-size: 1.3rem; margin: 0 0 4px; letter-spacing: -0.01em; }
 .b-rain { background: var(--rain-soft); color: var(--rain); }
 .b-sun { background: var(--accent-soft); color: var(--accent); }
 .b-warn { background: var(--warn-soft); color: var(--warn); }
+.b-cloud { background: var(--line); color: var(--ink); }
+.sub .badge { display: block; width: fit-content; max-width: 100%; margin: 0 0 4px; }
 ol.timeline { list-style: none; margin: 0; padding: 0; }
 ol.timeline li {
   display: grid; grid-template-columns: 58px 1fr; gap: 12px;
@@ -96,6 +101,15 @@ ol.timeline li:first-child { border-top: 0; padding-top: 4px; }
 .opt { font-size: 0.75rem; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; margin-left: 4px; font-weight: 500; }
 a.map { color: var(--accent); font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
 a.map:hover { text-decoration: underline; }
+button.pic {
+  font: inherit; font-size: 0.78rem; font-weight: 500; line-height: 1.5;
+  color: var(--accent); background: var(--accent-soft);
+  border: 1px solid transparent; border-radius: 999px;
+  padding: 0 9px; margin-left: 2px; cursor: pointer; white-space: nowrap;
+  vertical-align: baseline;
+}
+button.pic:hover { border-color: var(--accent); }
+button.pic:focus-visible, .mdl button:focus-visible, .mdl a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .callout {
   margin-top: 12px; padding: 12px 14px; border-radius: 12px;
   background: var(--warn-soft); color: var(--ink); font-size: 0.93rem;
@@ -110,6 +124,79 @@ ul.check { margin: 0; padding-left: 20px; }
 ul.check li { margin: 6px 0; }
 footer { margin-top: 40px; font-size: 0.82rem; color: var(--muted); }
 footer a { color: var(--muted); }
+
+/* 떠 있는 날씨 배너 */
+.wx {
+  position: fixed; z-index: 20;
+  left: 50%; bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  width: calc(100% - 32px); max-width: 420px;
+  transform: translateX(-50%);
+  padding: 7px 12px 6px; border-radius: 12px;
+  background: var(--card); color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  font-size: 0.8rem; line-height: 1.45;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+.wx.show { opacity: 0.97; visibility: visible; transition: opacity 0.2s ease; }
+body.modal-open .wx { visibility: hidden; }
+.wx-in { transition: opacity 0.15s ease; }
+.wx-in.swap { opacity: 0; }
+.wx-main { display: flex; flex-wrap: wrap; gap: 0 10px; align-items: baseline; }
+.wx-main b { font-weight: 700; }
+.wx-main i { font-style: normal; color: var(--rain); }
+.wx-src { color: var(--muted); font-size: 0.7rem; margin-top: 1px; }
+
+/* 사진 팝업 */
+.mdl-back {
+  position: fixed; inset: 0; z-index: 100;
+  display: none; align-items: flex-end; justify-content: center;
+  background: var(--scrim);
+}
+.mdl-back.open { display: flex; }
+.mdl {
+  width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto;
+  background: var(--card); color: var(--ink);
+  border-radius: 16px 16px 0 0;
+  padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 600px) {
+  .mdl-back { align-items: center; }
+  .mdl { border-radius: 16px; }
+}
+.mdl-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mdl-head h3 { margin: 0; font-size: 1.08rem; }
+.mdl-x {
+  flex: 0 0 auto; width: 40px; height: 40px; margin: -6px -8px -6px 0;
+  font: inherit; font-size: 1.3rem; line-height: 1;
+  color: var(--ink); background: transparent; border: 0; border-radius: 999px; cursor: pointer;
+}
+.mdl-x:hover { background: var(--line); }
+.mdl-fig { margin: 10px 0 0; position: relative; }
+.mdl-img {
+  display: block; width: 100%; max-height: 52vh; object-fit: contain;
+  background: var(--bg); border-radius: 10px; touch-action: pan-y;
+}
+.mdl-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 8px; }
+.mdl-nav button {
+  font: inherit; font-size: 0.85rem; padding: 4px 12px; cursor: pointer;
+  color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+}
+.mdl-nav button:hover { border-color: var(--accent); color: var(--accent); }
+.mdl-cap { margin: 8px 0 0; font-size: 0.88rem; }
+.mdl-credit { margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); }
+.mdl-credit a { color: var(--muted); }
+.mdl-none { margin: 12px 0 0; padding: 14px; border-radius: 10px; background: var(--bg); color: var(--muted); font-size: 0.92rem; }
+.mdl-links { margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.mdl-links a {
+  display: inline-block; font-size: 0.88rem; font-weight: 500; text-decoration: none;
+  color: var(--accent); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+}
+.mdl-links a:hover { border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) {
+  .wx, .wx.show, .wx-in { transition: none; }
+}
 </style>
 </head>
 <body>
@@ -134,15 +221,15 @@ footer a { color: var(--muted); }
   <p class="sub">쉬는 날과 날씨에 맞춰 순서를 정했어요.</p>
   <div class="card facts">
     <div class="fact"><div class="k">숙소</div><div class="v">단양읍 도전리, 구경시장 바로 옆 · 체크인 1일 15:00</div></div>
-    <div class="fact"><div class="k">패러글라이딩</div><div class="v">2일(월) · 잔금 20만원 현장 결제</div></div>
-    <div class="fact"><div class="k">날씨 (10/30 예보)</div><div class="v"><span class="badge b-rain">1일 비</span><span class="badge b-sun">2일 갬</span></div></div>
+    <div class="fact"><div class="k">패러글라이딩</div><div class="v">2일(월) 오후 · 단양패러마을(두산) · 잔금 20만원 현장 · 영상 포함</div></div>
+    <div class="fact"><div class="k" id="wx-fact-k">날씨 (기상청 예보)</div><div class="v" id="wx-fact">날씨 정보를 불러오지 못했어요.</div></div>
     <div class="fact"><div class="k">쉬는 날 피하기</div><div class="v">아쿠아리움·장다리식당은 월요일, 만천하스카이워크는 화요일 휴무</div></div>
   </div>
 </section>
 
 <section id="day1">
   <h2>1일차 · 11월 1일 일요일</h2>
-  <p class="sub"><span class="badge b-rain">비 예보</span>실내 위주 · 단양 5일장 열리는 날</p>
+  <p class="sub"><span class="badge" data-wx-sub="2026-11-01"></span>우산 챙기기 · 단양 5일장 열리는 날</p>
   <div class="card">
     <ol class="timeline">
       <li><div class="t">08:50</div><div>
@@ -154,24 +241,24 @@ footer a { color: var(--muted); }
         <div class="move">약 190km · 2시간 40분~3시간 · 휴게소 한 번</div>
       </div></li>
       <li><div class="t">12:50</div><div>
-        <div class="what">점심 · 장다리식당 마늘정식 <a class="map" href="https://map.naver.com/p/search/단양%20장다리식당" target="_blank" rel="noopener">지도</a></div>
+        <div class="what">점심 · 장다리식당 마늘정식 <a class="map" href="https://map.naver.com/p/search/단양%20장다리식당" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="jangdari">사진</button></div>
         <div class="note">10:30~20:00 · 월요일 휴무라 이날이 유일한 기회. 기다릴 수 있어요.</div>
       </div></li>
-      <li><div class="t">14:20</div><div>
-        <div class="what">다누리아쿠아리움 <a class="map" href="https://map.naver.com/p/search/다누리아쿠아리움" target="_blank" rel="noopener">지도</a></div>
-        <div class="move">읍내에서 5분</div>
-        <div class="note">실내 1~1.5시간 · 성인 18,000원(지역 상품권 5,000원 돌려받음)</div>
+      <li><div class="t">14:10</div><div>
+        <div class="what">만천하스카이워크 <a class="map" href="https://map.naver.com/p/search/만천하스카이워크" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="skywalk">사진</button></div>
+        <div class="move">읍내에서 차로 약 10분</div>
+        <div class="note">일요일은 열어요 · 09:00~17:00(표는 16:30까지) · 성인 4,000원. 알파인코스터 18,000원, 짚와이어 30,000원은 선택.</div>
       </div></li>
-      <li><div class="t">15:40</div><div>
+      <li><div class="t">15:50</div><div>
         <div class="what">숙소 체크인 · 쉬기</div>
       </div></li>
       <li><div class="t">17:30</div><div>
-        <div class="what">단양구경시장에서 저녁 <a class="map" href="https://map.naver.com/p/search/단양구경시장" target="_blank" rel="noopener">지도</a></div>
+        <div class="what">단양구경시장에서 저녁 <a class="map" href="https://map.naver.com/p/search/단양구경시장" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="market">사진</button></div>
         <div class="move">숙소에서 걸어서</div>
         <div class="note">흑마늘닭강정 · 마늘만두 · 마늘순대. 가게 대부분이 저녁 7시쯤 닫아요.</div>
       </div></li>
       <li><div class="t">19:00</div><div>
-        <div class="what">수양개빛터널 <a class="map" href="https://map.naver.com/p/search/수양개빛터널" target="_blank" rel="noopener">지도</a></div>
+        <div class="what">수양개빛터널 <a class="map" href="https://map.naver.com/p/search/수양개빛터널" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="suyanggae">사진</button></div>
         <div class="move">차로 약 15분</div>
         <div class="note">14:00~21:50(입장은 21:00까지) · 성인 9,000원</div>
       </div></li>
@@ -185,88 +272,89 @@ footer a { color: var(--muted); }
 
 <section id="day2">
   <h2>2일차 · 11월 2일 월요일</h2>
-  <p class="sub"><span class="badge b-sun">갬</span>야외 · 패러글라이딩 날</p>
+  <p class="sub"><span class="badge" data-wx-sub="2026-11-02"></span>오전은 천천히 · 오후 패러글라이딩 날</p>
   <div class="card">
     <ol class="timeline">
-      <li><div class="t">09:20</div><div>
+      <li><div class="t">10:30</div><div>
         <div class="what">숙소 출발</div>
-        <div class="move">양방산 약 15분 / 카페산 약 25~30분 · 예약 30분 전에 도착</div>
       </div></li>
-      <li><div class="t">10:00</div><div>
-        <div class="what">패러글라이딩</div>
-        <div class="note">비행은 10분 안팎, 기다리는 시간까지 1~1.5시간. 영상 촬영비가 따로인지 확인.</div>
-      </div></li>
-      <li><div class="t">11:30</div><div>
-        <div class="what">카페산 전망 커피 <span class="opt">선택</span> <a class="map" href="https://map.naver.com/p/search/카페산%20단양" target="_blank" rel="noopener">지도</a></div>
-      </div></li>
-      <li><div class="t">12:30</div><div>
-        <div class="what">점심 · 돌집식당 <a class="map" href="https://map.naver.com/p/search/단양%20돌집식당" target="_blank" rel="noopener">지도</a></div>
-        <div class="move">읍내로 약 25분</div>
-        <div class="note">10:00~21:00 연중무휴 · 흑마늘정식, 곤드레정식. 대신 갈 곳: 대교식당(마늘영양솥밥).</div>
-      </div></li>
-      <li><div class="t">14:00</div><div>
-        <div class="what">만천하스카이워크 <a class="map" href="https://map.naver.com/p/search/만천하스카이워크" target="_blank" rel="noopener">지도</a></div>
-        <div class="move">차로 약 10분</div>
-        <div class="note">09:00~17:00(표는 16:30까지) · 성인 4,000원. 알파인코스터 18,000원, 짚와이어 30,000원은 선택.</div>
-      </div></li>
-      <li><div class="t">15:40</div><div>
-        <div class="what">이끼터널 · 차로 지나가며 사진 <a class="map" href="https://map.naver.com/p/search/단양%20이끼터널" target="_blank" rel="noopener">지도</a></div>
+      <li><div class="t">10:50</div><div>
+        <div class="what">이끼터널 · 차로 지나가며 사진 <a class="map" href="https://map.naver.com/p/search/단양%20이끼터널" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="moss">사진</button></div>
         <div class="move">5분 · 차와 사람이 같이 다니는 길이라 조심</div>
       </div></li>
-      <li><div class="t">16:10</div><div>
-        <div class="what">단양강 잔도 걷기 <a class="map" href="https://map.naver.com/p/search/단양강잔도" target="_blank" rel="noopener">지도</a></div>
-        <div class="move">약 10분</div>
+      <li><div class="t">11:30</div><div>
+        <div class="what">점심 · 돌집식당 <a class="map" href="https://map.naver.com/p/search/단양%20돌집식당" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="dolzip">사진</button></div>
+        <div class="move">읍내</div>
+        <div class="note">10:00~21:00 연중무휴 · 흑마늘정식, 곤드레정식. 대신 갈 곳: 대교식당(마늘영양솥밥).</div>
+      </div></li>
+      <li><div class="t">12:30</div><div>
+        <div class="what">두산 활공장으로</div>
+        <div class="move">읍내에서 약 25~30분</div>
+      </div></li>
+      <li><div class="t">13:00</div><div>
+        <div class="what">패러글라이딩 · 단양패러마을 <a class="map" href="https://map.naver.com/p/search/단양패러마을" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="paraglide">사진</button></div>
+        <div class="move">가곡면 두산길 196-52 (두산 활공장)</div>
+        <div class="note">잔금 20만원 현장 결제 · 영상 촬영 포함. 비행은 10분 안팎, 기다리는 시간까지 1~1.5시간. 시간은 편할 때 와도 된다고 했지만, <b>비가 그친 뒤 운영하는지 아침에 전화로 확인</b>하기 · <a class="map" href="tel:0434213326">043-421-3326</a> · 운영 09:00~18:30(일몰·날씨에 따라 변동)</div>
+      </div></li>
+      <li><div class="t">14:30</div><div>
+        <div class="what">카페산 전망 커피 <span class="opt">선택</span> <a class="map" href="https://map.naver.com/p/search/카페산%20단양" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="cafesan">사진</button></div>
+        <div class="move">같은 두산 · 바로 근처</div>
+      </div></li>
+      <li><div class="t">16:00</div><div>
+        <div class="what">단양강 잔도 걷기 <a class="map" href="https://map.naver.com/p/search/단양강잔도" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="jando">사진</button></div>
+        <div class="move">두산에서 약 30분</div>
         <div class="note">무료 · 1.2km · 17:35쯤 해가 지면 조명이 켜져요(밤 11시까지).</div>
       </div></li>
       <li><div class="t">18:30</div><div>
-        <div class="what">저녁 · 마늘떡갈비 <a class="map" href="https://map.naver.com/p/search/단양%20가연%20떡갈비" target="_blank" rel="noopener">가연</a> 또는 <a class="map" href="https://map.naver.com/p/search/단양%20박쏘가리" target="_blank" rel="noopener">박쏘가리</a></div>
+        <div class="what">저녁 · 마늘떡갈비 <a class="map" href="https://map.naver.com/p/search/단양%20가연%20떡갈비" target="_blank" rel="noopener">가연</a> 또는 <a class="map" href="https://map.naver.com/p/search/단양%20박쏘가리" target="_blank" rel="noopener">박쏘가리</a> <button type="button" class="pic" data-place="dinner">사진</button></div>
         <div class="note">월요일에 여는지 아침에 전화로 확인하기.</div>
       </div></li>
       <li><div class="t">밤</div><div>
         <div class="what">숙소에서 쉬기 · 강변 산책</div>
       </div></li>
     </ol>
-    <div class="callout"><b>패러가 오후라면</b> 오전에 만천하스카이워크(9시 개장)와 이끼터널, 점심 먹고 패러, 해 질 무렵 잔도.<br>
-    <b>날씨 때문에 취소되면</b> 업체에 3일(화) 오전으로 옮길 수 있는지 물어보기.</div>
+    <div class="callout"><b>비로 패러가 취소되면</b> 업체에 3일(화) 오전(맑음 예보)으로 옮길 수 있는지 물어보기. 옮기면 3일차 아쿠아리움 자리에 넣어요.</div>
   </div>
 </section>
 
 <section id="day3">
   <h2>3일차 · 11월 3일 화요일</h2>
-  <p class="sub">만천하·빛터널은 쉬는 날 · 돌아가는 길에 제천</p>
+  <p class="sub"><span class="badge" data-wx-sub="2026-11-03"></span>만천하·빛터널은 쉬는 날 · 돌아가는 길에 제천</p>
   <div class="card">
     <ol class="timeline">
       <li><div class="t">09:30</div><div>
-        <div class="what">고수동굴 <span class="opt">선택</span> <a class="map" href="https://map.naver.com/p/search/단양%20고수동굴" target="_blank" rel="noopener">지도</a></div>
-        <div class="move">차로 약 5분</div>
-        <div class="note">40분 정도 · 성인 11,000원 · 계단과 미끄러운 바닥 주의</div>
+        <div class="what">다누리아쿠아리움 <a class="map" href="https://map.naver.com/p/search/다누리아쿠아리움" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="aquarium">사진</button></div>
+        <div class="move">숙소에서 차로 약 5분</div>
+        <div class="note">화요일은 열어요(월요일 휴관) · 1시간 안팎 · 성인 18,000원(지역 상품권 5,000원 돌려받음)</div>
       </div></li>
-      <li><div class="t">10:40</div><div>
+      <li><div class="t">10:50</div><div>
         <div class="what">체크아웃</div>
+        <div class="note">퇴실 시간은 아직 몰라요.</div>
       </div></li>
-      <li><div class="t">11:00</div><div>
-        <div class="what">도담삼봉 · 석문 <a class="map" href="https://map.naver.com/p/search/도담삼봉" target="_blank" rel="noopener">지도</a></div>
+      <li><div class="t">11:10</div><div>
+        <div class="what">도담삼봉 · 석문 <a class="map" href="https://map.naver.com/p/search/도담삼봉" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="dodam">사진</button></div>
         <div class="move">차로 약 10분</div>
         <div class="note">무료(주차는 유료) · 석문까지 계단 15분 정도</div>
       </div></li>
-      <li><div class="t">12:10</div><div>
-        <div class="what">점심 · 왕릉숯불갈비 마늘솥밥정식 <a class="map" href="https://map.naver.com/p/search/단양%20왕릉숯불갈비" target="_blank" rel="noopener">지도</a></div>
+      <li><div class="t">12:20</div><div>
+        <div class="what">점심 · 왕릉숯불갈비 마늘솥밥정식 <a class="map" href="https://map.naver.com/p/search/단양%20왕릉숯불갈비" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="wangneung">사진</button></div>
         <div class="note">11:00~21:00 연중무휴 · 앞에서 못 간 곳으로 바꿔도 좋아요.</div>
       </div></li>
-      <li><div class="t">13:30</div><div>
-        <div class="what">옥순봉 출렁다리 (제천) <a class="map" href="https://map.naver.com/p/search/옥순봉출렁다리" target="_blank" rel="noopener">지도</a></div>
+      <li><div class="t">13:40</div><div>
+        <div class="what">옥순봉 출렁다리 (제천) <a class="map" href="https://map.naver.com/p/search/옥순봉출렁다리" target="_blank" rel="noopener">지도</a> <button type="button" class="pic" data-place="oksun">사진</button></div>
         <div class="move">차로 약 35분</div>
         <div class="note">09:00~17:00 · 3,000원 중 2,000원을 제천 지역화폐로 돌려줘요 · 바람이 세면 운영 안 할 수 있어요.</div>
       </div></li>
-      <li><div class="t">14:40</div><div>
+      <li><div class="t">14:50</div><div>
         <div class="what">역곡으로 출발</div>
         <div class="move">약 170km · 2시간 30분</div>
       </div></li>
-      <li><div class="t">17:10</div><div>
+      <li><div class="t">17:20</div><div>
         <div class="what">역곡 도착</div>
         <div class="note">송파로 가는 길은 퇴근 시간과 겹쳐요. 저녁 먹고 7시 반 이후 출발 추천.</div>
       </div></li>
     </ol>
+    <div class="callout"><b>고수동굴</b>은 선택이에요(성인 11,000원, 예산은 넘어요). 아쿠아리움 대신 가고 싶을 때만.</div>
   </div>
 </section>
 
@@ -287,7 +375,7 @@ footer a { color: var(--muted); }
         <tr class="total"><td>합계</td><td class="n">약 32.9만원</td></tr>
       </tbody>
     </table>
-    <p class="small">남는 돈은 1만원 정도예요. 고수동굴(2.2만원), 패러 영상 촬영비, 알파인코스터(3.6만원), 쏘가리매운탕, 마지막 날 역곡 저녁을 넣으면 넘어요. 패러 잔금 20만원은 이 표와 별도로 현장에서 내요.</p>
+    <p class="small">남는 돈은 1만원 정도예요. 고수동굴(2.2만원), 알파인코스터(3.6만원), 쏘가리매운탕, 마지막 날 역곡 저녁을 넣으면 넘어요. 패러 잔금 20만원은 이 표와 별도로 현장에서 내요(영상 촬영 포함).</p>
   </div>
 </section>
 
@@ -295,7 +383,7 @@ footer a { color: var(--muted); }
   <h2>출발 전에 확인할 것</h2>
   <div class="card">
     <ul class="check">
-      <li><b>패러글라이딩 업체</b>: 비행 시각, 모이는 곳(양방산 / 카페산), 영상 촬영비, 날씨로 취소될 때 날짜 변경</li>
+      <li><b>단양패러마을</b> · <a class="map" href="tel:0434213326">043-421-3326</a>: 2일(월) 당일 아침 비가 그친 뒤 운영하는지, 비로 취소되면 3일(화) 오전으로 옮길 수 있는지</li>
       <li><b>숙소</b>: 퇴실 시간, 주차</li>
       <li>2일(월) 저녁 식당이 여는지</li>
       <li>수양개빛터널 1일 운영 여부 · 043-421-5454</li>
@@ -305,9 +393,323 @@ footer a { color: var(--muted); }
 </section>
 
 <footer>
-  2026년 10월 30일 웹 조사 기준이에요. 운영 시간과 요금은 바뀔 수 있으니 가기 전에 한 번 더 확인하세요. 이동 시간은 추정치예요.
+  2026년 10월 30일 웹 조사 기준이에요. 운영 시간과 요금은 바뀔 수 있으니 가기 전에 한 번 더 확인하세요. 이동 시간은 추정치예요. 사진은 Wikimedia Commons의 자유 이용 사진이고, 작가와 라이선스는 사진 팝업에 적혀 있어요.
 </footer>
 
 </div>
+
+<aside class="wx" id="wx" aria-label="날씨 예보">
+  <div class="wx-in" id="wx-in"></div>
+</aside>
+
+<div class="mdl-back" id="mdl-back">
+  <div class="mdl" id="mdl" role="dialog" aria-modal="true" aria-labelledby="mdl-title" tabindex="-1">
+    <div class="mdl-head">
+      <h3 id="mdl-title"></h3>
+      <button type="button" class="mdl-x" id="mdl-x" aria-label="닫기">✕</button>
+    </div>
+    <div id="mdl-body"></div>
+  </div>
+</div>
+
+<!-- WEATHER-DATA:START -->
+<script type="application/json" id="weather-data">
+{
+  "source": "기상청 동네예보 · 단양읍",
+  "issuedShort": "10.30.(금) 11:00",
+  "issuedMid": "10.30.(금) 06:00",
+  "collectedAt": "2026-10-30T11:59:28+09:00",
+  "collectedLabel": "10/30 11:59",
+  "days": {
+    "2026-11-01": {
+      "am": "흐림",
+      "pm": "흐림",
+      "min": 4,
+      "max": 13,
+      "popAm": 30,
+      "popPm": 30,
+      "midterm": false
+    },
+    "2026-11-02": {
+      "am": "한때 비",
+      "pm": "맑음",
+      "min": 7,
+      "max": 16,
+      "popAm": 60,
+      "popPm": 0,
+      "midterm": false
+    },
+    "2026-11-03": {
+      "am": "맑음",
+      "pm": "맑음",
+      "min": 3,
+      "max": 17,
+      "popAm": 10,
+      "popPm": 10,
+      "midterm": true
+    }
+  }
+}
+</script>
+<!-- WEATHER-DATA:END -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- 날씨 (scripts/update-weather.mjs가 채운 JSON) ---------- */
+  var wxData = {};
+  try { wxData = JSON.parse(document.getElementById('weather-data').textContent) || {}; } catch (e) {}
+  var DAYS = wxData.days || {};
+  var DOW = ['일', '월', '화', '수', '목', '금', '토'];
+  var DAY_BY_ID = { day1: '2026-11-01', day2: '2026-11-02', day3: '2026-11-03' };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+  }
+  function emoji(p) {
+    if (!p) return '';
+    if (/눈/.test(p)) return '🌨️';
+    if (/소나기/.test(p) || /한때.*비|비.*한때/.test(p)) return '🌦️';
+    if (/비/.test(p)) return '🌧️';
+    if (/흐림/.test(p)) return '☁️';
+    if (/구름많음/.test(p)) return '⛅';
+    if (/구름조금/.test(p)) return '🌤️';
+    if (/맑음/.test(p)) return '☀️';
+    return '🌡️';
+  }
+  function phraseHtml(p) {
+    if (!p) return '–';
+    return emoji(p) + ' ' + esc(p);
+  }
+  function dateLabel(key) {
+    var p = key.split('-');
+    var d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2]));
+    return (+p[1]) + '/' + (+p[2]) + '(' + DOW[d.getUTCDay()] + ')';
+  }
+  function dayText(d) {
+    if (d.am && d.pm && d.am !== d.pm) return '오전 ' + d.am + ' · 오후 ' + d.pm;
+    return d.pm || d.am || '';
+  }
+  function badgeClass(d) {
+    var s = (d.am || '') + ' ' + (d.pm || '');
+    if (/비|눈|소나기/.test(s)) return 'b-rain';
+    if (/구름|흐림/.test(s)) return 'b-cloud';
+    return 'b-sun';
+  }
+  function maxPop(d) {
+    var a = [d.popAm, d.popPm].filter(function (v) { return typeof v === 'number'; });
+    return a.length ? Math.max.apply(null, a) : null;
+  }
+  function sourceLine(d) {
+    var t = d.midterm
+      ? '기상청 중기예보 ' + wxData.issuedMid + ' 발표'
+      : '기상청 단기예보 ' + wxData.issuedShort + ' 발표';
+    return t + ' · ' + wxData.collectedLabel + ' 수집';
+  }
+
+  // 날짜별 배지, 기본 정보 칸
+  Array.prototype.forEach.call(document.querySelectorAll('[data-wx-sub]'), function (el) {
+    var d = DAYS[el.getAttribute('data-wx-sub')];
+    if (!d) { el.hidden = true; return; }
+    var pop = maxPop(d);
+    el.className = 'badge ' + badgeClass(d);
+    el.textContent = (d.am && d.pm && d.am !== d.pm ? emoji(d.am) + '→' + emoji(d.pm) : emoji(d.pm || d.am)) + ' ' + dayText(d) + (pop !== null ? ' · 강수 ' + pop + '%' : '');
+  });
+  (function () {
+    var box = document.getElementById('wx-fact');
+    var keys = Object.keys(DAYS).sort();
+    if (!keys.length) return;
+    var html = keys.map(function (k) {
+      var d = DAYS[k];
+      return '<span class="badge ' + badgeClass(d) + '">' + esc(dateLabel(k).replace(/\(.\)/, '')) + ' ' + esc(dayText(d)) + '</span>';
+    }).join('');
+    html += '<div class="small">' + esc(sourceLine(DAYS[keys[0]])) + '</div>';
+    box.innerHTML = html;
+  })();
+
+  // 떠 있는 배너: 화면 가운데쯤에 걸린 일차의 예보
+  var wx = document.getElementById('wx');
+  var wxIn = document.getElementById('wx-in');
+  var wxCur = null;
+  function renderWx(key) {
+    var d = DAYS[key];
+    if (!d) return '';
+    return '<div class="wx-main"><b>' + esc(dateLabel(key)) + '</b>' +
+      '<span>오전 ' + phraseHtml(d.am) + (d.popAm !== null && d.popAm !== undefined ? ' <i>' + d.popAm + '%</i>' : '') + '</span>' +
+      '<span>오후 ' + phraseHtml(d.pm) + (d.popPm !== null && d.popPm !== undefined ? ' <i>' + d.popPm + '%</i>' : '') + '</span>' +
+      '<span>' + d.min + '~' + d.max + '℃</span></div>' +
+      '<div class="wx-src">' + esc(sourceLine(d)) + '</div>';
+  }
+  function showWx(key) {
+    if (key === wxCur) return;
+    var prev = wxCur;
+    wxCur = key;
+    if (!key || !DAYS[key]) { wx.classList.remove('show'); return; }
+    if (prev && DAYS[prev]) {
+      wxIn.classList.add('swap');
+      setTimeout(function () {
+        if (wxCur !== key) return;
+        wxIn.innerHTML = renderWx(key);
+        wxIn.classList.remove('swap');
+      }, 150);
+    } else {
+      wxIn.innerHTML = renderWx(key);
+    }
+    wx.classList.add('show');
+  }
+  if ('IntersectionObserver' in window && Object.keys(DAYS).length) {
+    var hit = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { hit[e.target.id] = e.isIntersecting; });
+      var now = ['day1', 'day2', 'day3'].filter(function (id) { return hit[id]; })[0];
+      var other = ['basics', 'budget', 'todo'].filter(function (id) { return hit[id]; })[0];
+      if (now) showWx(DAY_BY_ID[now]);
+      else if (other) showWx(null);   // 일차 밖(기본 정보·예산·확인할 것)에서는 숨김
+    }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
+    ['basics', 'day1', 'day2', 'day3', 'budget', 'todo'].forEach(function (id) {
+      var s = document.getElementById(id);
+      if (s) io.observe(s);
+    });
+    window.addEventListener('scroll', function () { if (window.scrollY < 60) showWx(null); }, { passive: true });
+  }
+
+  /* ---------- 사진 팝업 ---------- */
+  var N = function (q) { return 'https://search.naver.com/search.naver?where=image&query=' + encodeURIComponent(q); };
+  var CC = {
+    'sa4': { l: 'CC BY-SA 4.0', u: 'https://creativecommons.org/licenses/by-sa/4.0/' },
+    'sa3': { l: 'CC BY-SA 3.0', u: 'https://creativecommons.org/licenses/by-sa/3.0/' },
+    'by4': { l: 'CC BY 4.0', u: 'https://creativecommons.org/licenses/by/4.0/' },
+    'by2': { l: 'CC BY 2.0', u: 'https://creativecommons.org/licenses/by/2.0/' }
+  };
+  var C = 'https://commons.wikimedia.org/wiki/';
+  // photos가 비어 있으면 "공유 가능한 사진이 없어요". 사진은 Wikimedia Commons(자유 라이선스)만 쓴다.
+  var PLACES = {
+    jangdari:  { name: '장다리식당', q: '단양 장다리식당', photos: [] },
+    skywalk:   { name: '만천하스카이워크', q: '만천하스카이워크', photos: [
+      { src: 'photos/skywalk.jpg', cap: '스카이워크에서 본 단양읍 전경', by: 'Trainholic', cc: 'sa4', page: C + 'File:Danyang-Eup.jpg' }] },
+    market:    { name: '단양구경시장', q: '단양구경시장', photos: [] },
+    suyanggae: { name: '수양개빛터널', q: '수양개빛터널', photos: [] },
+    moss:      { name: '이끼터널', q: '단양 이끼터널', photos: [] },
+    dolzip:    { name: '돌집식당', q: '단양 돌집식당', photos: [] },
+    paraglide: { name: '단양패러마을 · 두산 활공장', q: '단양패러마을 두산 활공장', photos: [
+      { src: 'photos/paraglide.jpg', cap: '단양 하늘의 패러글라이더 (두산 활공장 사진은 아니에요)', by: 'Douglas Perkins', cc: 'by4', page: C + 'File:Paragliders_in_Danyang.jpg' }] },
+    cafesan:   { name: '카페산', q: '단양 카페산', photos: [] },
+    jando:     { name: '단양강 잔도', q: '단양강 잔도', photos: [
+      { src: 'photos/jando.jpg', cap: '단양강 잔도', by: 'Dittwjfsdgkvkdjg', cc: 'sa4', page: C + 'File:DY-JandoTrail-JSw1.jpg' }] },
+    dinner:    { name: '가연 · 박쏘가리', q: '단양 가연 떡갈비', extra: [{ t: '박쏘가리 사진 더 보기', q: '단양 박쏘가리' }], photos: [] },
+    aquarium:  { name: '다누리아쿠아리움', q: '다누리아쿠아리움', photos: [
+      { src: 'photos/aquarium.jpg', cap: '다누리아쿠아리움', by: 'hyolee2', cc: 'sa4', page: C + 'File:Danuri_Aquarium.JPG' }] },
+    dodam:     { name: '도담삼봉 · 석문', q: '도담삼봉', photos: [
+      { src: 'photos/dodam.jpg', cap: '도담삼봉', by: 'Steve46814', cc: 'sa3', page: C + 'File:Korea-Danyang-Dodamsambong_3082-07.JPG' },
+      { src: 'photos/seokmun.jpg', cap: '석문', by: 'Steve46814', cc: 'sa3', page: C + 'File:Korea-Danyang-Dodamsambong_Seokmun_3113-07-07.JPG' }] },
+    wangneung: { name: '왕릉숯불갈비', q: '단양 왕릉숯불갈비', photos: [] },
+    oksun:     { name: '옥순봉 출렁다리', q: '옥순봉출렁다리', photos: [
+      { src: 'photos/oksun.jpg', cap: '옥순봉 (출렁다리가 있는 봉우리)', by: 'Fox Totorus', cc: 'by2', page: C + 'File:Eight_Scenic_Wonders_of_Danyang_-_Oksunbong_(8081618595).jpg' }] }
+  };
+
+  var back = document.getElementById('mdl-back');
+  var dlg = document.getElementById('mdl');
+  var title = document.getElementById('mdl-title');
+  var body = document.getElementById('mdl-body');
+  var closeBtn = document.getElementById('mdl-x');
+  var lastFocus = null, cur = null, idx = 0;
+
+  function render() {
+    var p = cur, h = '';
+    title.textContent = p.name;
+    if (p.photos.length) {
+      h += '<figure class="mdl-fig" id="mdl-fig"></figure>';
+      if (p.photos.length > 1) {
+        h += '<div class="mdl-nav"><button type="button" id="mdl-prev" aria-label="이전 사진">‹ 이전</button><span class="small" id="mdl-count" aria-live="polite"></span><button type="button" id="mdl-next" aria-label="다음 사진">다음 ›</button></div>';
+      }
+      h += '<p class="mdl-cap" id="mdl-cap"></p><p class="mdl-credit" id="mdl-credit"></p>';
+    } else {
+      h += '<p class="mdl-none">공유 가능한 사진이 없어요.</p>';
+    }
+    h += '<div class="mdl-links"><a href="' + N(p.q) + '" target="_blank" rel="noopener">네이버에서 사진 더 보기</a>';
+    (p.extra || []).forEach(function (x) { h += '<a href="' + N(x.q) + '" target="_blank" rel="noopener">' + esc(x.t) + '</a>'; });
+    h += '</div>';
+    body.innerHTML = h;
+    if (p.photos.length) {
+      if (p.photos.length > 1) {
+        document.getElementById('mdl-prev').onclick = function () { go(-1); };
+        document.getElementById('mdl-next').onclick = function () { go(1); };
+      }
+      show(0);
+    }
+  }
+  function show(i) {
+    var n = cur.photos.length;
+    idx = (i + n) % n;
+    var ph = cur.photos[idx];
+    var fig = document.getElementById('mdl-fig');
+    fig.textContent = '';
+    var img = new Image();           // 팝업을 열 때에만 이미지를 받아요
+    img.className = 'mdl-img';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = cur.name + (ph.cap ? ' · ' + ph.cap : '');
+    img.src = ph.src;
+    fig.appendChild(img);
+    document.getElementById('mdl-cap').textContent = ph.cap || '';
+    var cc = CC[ph.cc];
+    document.getElementById('mdl-credit').innerHTML = '사진: ' + esc(ph.by) + ' · ' + esc(cc.l) +
+      ' · <a href="' + esc(ph.page) + '" target="_blank" rel="noopener">원본</a>';
+    var c = document.getElementById('mdl-count');
+    if (c) c.textContent = (idx + 1) + ' / ' + n;
+    var sx = null;
+    img.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    img.addEventListener('touchend', function (e) {
+      if (sx === null || n < 2) return;
+      var dx = e.changedTouches[0].clientX - sx; sx = null;
+      if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    });
+  }
+  function go(d) { show(idx + d); }
+
+  function openPlace(id, trigger) {
+    cur = PLACES[id];
+    if (!cur) return;
+    lastFocus = trigger;
+    render();
+    back.classList.add('open');
+    document.body.classList.add('modal-open');
+    dlg.scrollTop = 0;
+    closeBtn.focus();
+  }
+  function closeMdl() {
+    if (!back.classList.contains('open')) return;
+    back.classList.remove('open');
+    document.body.classList.remove('modal-open');
+    body.innerHTML = '';             // 닫으면 이미지도 비움
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function focusables() {
+    return Array.prototype.filter.call(dlg.querySelectorAll('button, a[href]'), function (el) { return !el.disabled; });
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('button.pic[data-place]');
+    if (b) openPlace(b.getAttribute('data-place'), b);
+  });
+  closeBtn.addEventListener('click', closeMdl);
+  back.addEventListener('click', function (e) { if (e.target === back) closeMdl(); });
+  document.addEventListener('keydown', function (e) {
+    if (!back.classList.contains('open')) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeMdl(); return; }
+    if (e.key === 'ArrowLeft' && cur.photos.length > 1) { go(-1); return; }
+    if (e.key === 'ArrowRight' && cur.photos.length > 1) { go(1); return; }
+    if (e.key === 'Tab') {
+      var f = focusables();
+      if (!f.length) { e.preventDefault(); return; }
+      var first = f[0], last = f[f.length - 1], a = document.activeElement;
+      if (e.shiftKey && (a === first || a === dlg)) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+      else if (!dlg.contains(a)) { e.preventDefault(); first.focus(); }
+    }
+  });
+})();
+</script>
 </body>
 </html>
